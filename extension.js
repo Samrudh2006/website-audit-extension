@@ -56,6 +56,10 @@ function requireTrust() {
   return true;
 }
 
+// Inline tree-item buttons pass the TreeItem; palette/automation and
+// item.command pass the finding itself. Accept both.
+function asFinding(arg) { return arg && arg.finding ? arg.finding : arg; }
+
 async function runScan() {
   if (!requireTrust()) return null;
   const folders = vscode.workspace.workspaceFolders;
@@ -72,7 +76,7 @@ async function runScan() {
       'Website Audit checks pages by rendering them in a local headless Chrome.',
       {
         modal: true,
-        detail: 'While auditing, page JavaScript runs locally. By default the network is restricted (best effort): external URLs your pages reference (fonts, images, scripts) are blocked, and the page is audited on its fallback rendering with anything blocked listed for manual review. Set websiteAudit.allowNetwork to true to audit fully-resourced pages. The audit tools never send your source anywhere.\n\nScan this workspace?'
+        detail: 'While auditing, page JavaScript runs locally. By default the network is restricted (best effort): external URLs your pages reference (fonts, images, scripts) are blocked, and the page is audited on its fallback rendering with anything blocked listed for manual review. Set websiteAudit.allowNetwork to true to audit fully-resourced pages. The extension itself uploads nothing, but the page JavaScript runs and this restriction is not isolation: scripts in iframes or workers could still reach the network.\n\nScan this workspace?'
       },
       'Scan This Workspace'
     );
@@ -156,16 +160,19 @@ async function activate(context) {
       reportPanel.showReport(context, state);
     }),
     vscode.commands.registerCommand('website-audit.showReport', () => reportPanel.showReport(context, state)),
-    vscode.commands.registerCommand('website-audit.openFinding', async (finding) => {
+    vscode.commands.registerCommand('website-audit.openFinding', async (arg) => {
+      const finding = asFinding(arg);
       if (!finding) return;
       const doc = await vscode.workspace.openTextDocument(finding.file);
       await vscode.window.showTextDocument(doc, { preview: true });
     }),
-    vscode.commands.registerCommand('website-audit.previewFix', (finding) => {
+    vscode.commands.registerCommand('website-audit.previewFix', (arg) => {
+      const finding = asFinding(arg);
       if (!finding || !requireTrust()) return;
       return fixer.previewFix(context, eng(), finding, state, refreshAll);
     }),
-    vscode.commands.registerCommand('website-audit.applyFix', (finding) => {
+    vscode.commands.registerCommand('website-audit.applyFix', (arg) => {
+      const finding = asFinding(arg);
       if (!finding || !requireTrust()) return;
       return fixer.applyFix(context, eng(), finding, state, refreshAll, rescanFile);
     }),
@@ -173,7 +180,8 @@ async function activate(context) {
       if (!requireTrust()) return;
       return fixer.applyAllFixes(context, eng(), state, refreshAll, rescanFile);
     }),
-    vscode.commands.registerCommand('website-audit.revertFix', (finding) => {
+    vscode.commands.registerCommand('website-audit.revertFix', (arg) => {
+      const finding = asFinding(arg);
       if (!requireTrust()) return;
       const file = finding && finding.file ? finding.file
         : state.appliedFixes.length ? state.appliedFixes[state.appliedFixes.length - 1].file : null;
@@ -184,7 +192,8 @@ async function activate(context) {
       await extensionContext.workspaceState.update('websiteAudit.pageRenderConsent', undefined);
       vscode.window.showInformationMessage('Website Audit: page-render consent reset. The next scan will ask again.');
     }),
-    vscode.commands.registerCommand('website-audit.showGuidance', (finding) => {
+    vscode.commands.registerCommand('website-audit.showGuidance', (arg) => {
+      const finding = asFinding(arg);
       if (!finding) return;
       vscode.window.showInformationMessage(`${finding.message}`, { modal: true, detail: `Check: ${finding.tool}\nScope: ${finding.scope}\n\nThis needs a human check - the automated tools cannot verify it. See the report for the full manual review queue.` });
     })
