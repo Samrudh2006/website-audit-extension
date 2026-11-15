@@ -106,3 +106,8 @@ The audit engine lives in `engine/` (original work, MIT) with its contract in
 ## License
 
 MIT. See LICENSE.
+
+## Changelog
+
+- **0.1.1** - Fixed: clicking "Apply Fix" on the preview notification did not re-scan the file, so the Findings tree and diagnostics kept showing the fixed issue until you pressed Re-test. All apply/revert paths now re-scan automatically (regression test added). Single-file re-scans after a fix now honor `websiteAudit.allowNetwork` like the full scan does.
+- **0.1.0** - First tested prototype.
