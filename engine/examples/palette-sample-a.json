@@ -1,0 +1,41 @@
+{
+  "text_pairs": [
+    {
+      "name": "body ink on ivory",
+      "fg": "#23323A",
+      "bg": "#FBF7F0"
+    },
+    {
+      "name": "headings teal-dk on ivory",
+      "fg": "#1F5F59",
+      "bg": "#FBF7F0"
+    },
+    {
+      "name": "muted lead on ivory",
+      "fg": "#5B6B72",
+      "bg": "#FBF7F0"
+    },
+    {
+      "name": "primary button white on coral-dk",
+      "fg": "#FFFFFF",
+      "bg": "#C24A2F"
+    },
+    {
+      "name": "emergency bar white on teal-dk",
+      "fg": "#FFFFFF",
+      "bg": "#1F5F59"
+    },
+    {
+      "name": "footer fine print on teal-dk (fixed)",
+      "fg": "#C4DAD5",
+      "bg": "#1F5F59"
+    }
+  ],
+  "ui_pairs": [
+    {
+      "name": "outline button border on ivory",
+      "fg": "#2A7F76",
+      "bg": "#FBF7F0"
+    }
+  ]
+}
