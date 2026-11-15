@@ -38,7 +38,8 @@ function refreshAll() {
 async function rescanFile(file) {
   if (!requireTrust()) return;
   if (!state.current) return;
-  const r = await engine.auditFile(enginePath(), file, (m) => channel.appendLine(m));
+  const offline = !vscode.workspace.getConfiguration('websiteAudit').get('allowNetwork', false);
+  const r = await engine.auditFile(enginePath(), file, (m) => channel.appendLine(m), { offline });
   state.current.findings = state.current.findings.filter((f) => f.file !== file).concat(r.findings);
   state.current.perFile[file] = { report: r.report, error: r.error };
   state.current.at = new Date().toISOString();
@@ -143,6 +144,7 @@ async function runScan() {
 
 async function activate(context) {
   extensionContext = context;
+  state.rescanFile = rescanFile;
   channel = vscode.window.createOutputChannel('Website Audit');
   diagnostics = vscode.languages.createDiagnosticCollection('website-audit');
   context.subscriptions.push(diagnostics, channel);
@@ -209,6 +211,7 @@ async function activate(context) {
     },
     runScan,
     rescanFile,
+    acceptPreview: (finding) => { if (!requireTrust()) return { error: 'workspace not trusted' }; return fixer.acceptPreview(context, eng(), finding, state, refreshAll); },
     getState: () => state,
     previewFix: (finding) => { if (!requireTrust()) return { error: 'workspace not trusted' }; return fixer.previewFix(context, eng(), finding, state, refreshAll); },
     applyFix: (finding) => { if (!requireTrust()) return { error: 'workspace not trusted' }; return fixer.applyFix(context, eng(), finding, state, refreshAll, rescanFile); },
