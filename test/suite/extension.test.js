@@ -155,6 +155,20 @@ suite('Website Audit extension (real host + real engine)', () => {
     fs.unlinkSync(motionFile() + '.bak'); // leave workspace clean
   });
 
+  test('preview-notification Apply path re-scans the file (regression: stale UI)', async () => {
+    const ep = vscode.extensions.getExtension('samrudh.website-audit-extension').extensionPath;
+    if (fs.existsSync(motionFile() + '.bak')) fs.unlinkSync(motionFile() + '.bak');
+    fs.copyFileSync(path.join(ep, 'engine', 'tools', 'tests', 'fixture-motion.html'), motionFile());
+    await api.rescanFile(motionFile());
+    const finding = api.getState().current.findings.find((f) => f.fixable === 'motion-patch' && f.file === motionFile());
+    assert.ok(finding, 'fixable finding present on pristine fixture');
+    await api.previewFix(finding);
+    const res = await api.acceptPreview(finding); // same function the notification button calls
+    assert.ok(res.ok, `apply ok: ${JSON.stringify(res)}`);
+    assert.ok(!api.getState().current.findings.some((f) => f.rule === 'reduced-motion' && f.file === motionFile()), 'finding cleared WITHOUT a manual Re-test');
+    fs.unlinkSync(motionFile() + '.bak');
+  });
+
   test('declares untrusted-workspace gate (no child processes in Restricted Mode)', async () => {
     const pkg = JSON.parse(fs.readFileSync(path.join(vscode.extensions.getExtension('samrudh.website-audit-extension').extensionPath, 'package.json'), 'utf8'));
     assert.strictEqual(pkg.capabilities && pkg.capabilities.untrustedWorkspaces && pkg.capabilities.untrustedWorkspaces.supported, false, 'untrustedWorkspaces.supported=false declared');
