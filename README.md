@@ -56,8 +56,9 @@ output, and it never collapses results into a single "quality score".
 Before the first scan in a workspace, the extension asks for explicit consent
 (modal dialog): auditing renders your HTML in a local headless Chrome, so page
 JavaScript runs locally. Consent is remembered per workspace and revocable
-with `Website Audit: Reset Page-Render Consent`. The audit tools themselves
-never send your source anywhere.
+with `Website Audit: Reset Page-Render Consent`. The extension itself
+uploads nothing, but page JavaScript runs and the network restriction below is
+best effort, not isolation.
 
 Scans run with a restricted network by default (`websiteAudit.allowNetwork:
 false`): external URLs your pages reference (stylesheets, fonts, images,
