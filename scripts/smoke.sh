@@ -9,14 +9,16 @@ EXT_DIR=/tmp/wa-fresh-ext/samrudh.website-audit-extension-0.1.0
 rm -rf "$EXT_DIR" && mkdir -p "$EXT_DIR"
 ( cd "$EXT_DIR" && unzip -q -o "$OLDPWD/website-audit-extension-0.1.0.vsix" && cp -r extension/* . && rm -rf extension )
 
-rm -rf /tmp/wa-smoke-ws && mkdir -p /tmp/wa-smoke-ws
-cp engine/tools/tests/fixture-motion.html engine/tools/tests/fixture-nav-bad.html \
-   engine/tools/tests/fixture-nav-good.html engine/tools/tests/fixture-collapse-bad.html /tmp/wa-smoke-ws/
+for w in /tmp/wa-smoke-ws /tmp/wa-smoke-ws2; do  # separate workspace per journey: preview writes .website-audit/
+  rm -rf $w && mkdir -p $w
+  cp engine/tools/tests/fixture-motion.html engine/tools/tests/fixture-nav-bad.html \
+     engine/tools/tests/fixture-nav-good.html engine/tools/tests/fixture-collapse-bad.html $w/
+done
 
-run() { # name, user-data suffix, extra flags..., tests path last
-  local name=$1 ud=$2 tests=$3; shift 3
+run() { # name, user-data suffix, tests path, workspace, extra flags...
+  local name=$1 ud=$2 tests=$3 ws=$4; shift 4
   echo "== $name"
-  timeout 110 xvfb-run -a /usr/share/code/code /tmp/wa-smoke-ws \
+  timeout 110 xvfb-run -a /usr/share/code/code "$ws" \
     --extensions-dir=/tmp/wa-fresh-ext --user-data-dir="/tmp/wa-fresh-$ud" \
     --extensionDevelopmentPath="$EXT_DIR" \
     --extensionTestsPath="$PWD/$tests" \
@@ -28,7 +30,7 @@ run() { # name, user-data suffix, extra flags..., tests path last
 # folder trusted deterministically (a fresh profile otherwise decides by an
 # interactive prompt, which a test host cannot answer). This flag only settles
 # WHICH journey is under test; the untrusted journey is covered below.
-run install-smoke ud-smoke1 test/install-smoke.js --disable-workspace-trust
+run install-smoke ud-smoke1 test/install-smoke.js /tmp/wa-smoke-ws --disable-workspace-trust
 # Untrusted journey: no trust flag, fresh profile starts untrusted (or the test
 # forces it); every entry point must refuse without spawning Chrome or writing.
-run restricted-smoke ud-smoke2 test/restricted-smoke.js
+run restricted-smoke ud-smoke2 test/restricted-smoke.js /tmp/wa-smoke-ws2
