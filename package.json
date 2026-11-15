@@ -2,7 +2,7 @@
   "name": "website-audit-extension",
   "displayName": "Website Audit",
   "description": "Scan website projects for accessibility and quality issues, preview fixes as diffs, apply approved changes, and re-test with before/after evidence.",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "publisher": "samrudh",
   "private": true,
   "license": "MIT",
