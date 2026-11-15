@@ -196,8 +196,56 @@ if (sticky) {
         `${anchors.checked} anchors clicked via JS with 150ms settle wait${anchors.hits.length ? '; hidden under header: ' + anchors.hits.join(', ') : ''} - instant scroll-behavior assumed; a smooth-scrolling page may need a longer wait; fix with scroll-padding-top or scroll-margin-top`);
 }
 
+// ---------- content-driven collapse probe: do nav links crowd at 360px with no collapse control? ----------
+await page('Emulation.setDeviceMetricsOverride', { width: 360, height: 740, deviceScaleFactor: 1, mobile: true });
+await new Promise((r) => setTimeout(r, 300));
+const crowd = await evaljs(`(() => {
+    const vis = (el) => {
+        const r = el.getBoundingClientRect();
+        const cs = getComputedStyle(el);
+        return r.width > 0 && r.height > 0 && cs.display !== 'none' && cs.visibility !== 'hidden';
+    };
+    let scope = null, links = [];
+    for (const n of document.querySelectorAll('header nav, header, nav')) {
+        const ls = [...n.querySelectorAll('a[href]')].filter(vis);
+        if (ls.length >= 3) { scope = n; links = ls; break; }
+    }
+    const buttons = [...document.querySelectorAll('button, [role="button"], summary')].filter((el) => vis(el) && el.getBoundingClientRect().width <= 120);
+    const labeled = (el) => /menu|hamburger|nav|\\bopen\\b/.test(((el.getAttribute('aria-label') || '') + ' ' + el.textContent + ' ' + (el.className.baseVal !== undefined ? el.className.baseVal : el.className)).toLowerCase());
+    const control = buttons.some(labeled);
+    const unlabeledControl = !control && buttons.length > 0;
+    if (!scope) return control
+        ? { applicable: true, collapsed: true, crowded: false, hasControl: true }
+        : unlabeledControl ? { applicable: false } : { applicable: false };
+    const rects = links.map((el) => el.getBoundingClientRect());
+    let overlap = false;
+    for (let i = 0; i < rects.length && !overlap; i++)
+        for (let j = i + 1; j < rects.length; j++) {
+            const ox = Math.min(rects[i].right, rects[j].right) - Math.max(rects[i].left, rects[j].left);
+            const oy = Math.min(rects[i].bottom, rects[j].bottom) - Math.max(rects[i].top, rects[j].top);
+            if (ox > 2 && oy > 2) { overlap = true; break; }
+        }
+    const overflow = scope.scrollWidth > scope.clientWidth + 4;
+    const rows = new Set(rects.map((r) => Math.round(r.top))).size > 1;
+    return { applicable: true, linkCount: links.length, overlap, overflow, wrapped: rows, crowded: overlap || overflow, hasControl: control, unlabeledControl };
+})()`);
+await page('Emulation.clearDeviceMetricsOverride');
+if (crowd.applicable) {
+    // The observed defect is the overlap/overflow itself, never the absence of a
+    // hamburger: wrapping, fewer links or smaller type are equally valid fixes.
+    const observed = crowd.overlap ? 'overlap each other' : 'overflow their bar (content clipped or unreachable)';
+    probe('nav links do not crowd at 360px (collapse control or they fit)', !crowd.crowded,
+        crowd.crowded
+            ? crowd.hasControl
+                ? `${crowd.linkCount} nav links ${observed} at 360px while a menu control is also visible - links and control shown at once`
+                : crowd.unlabeledControl
+                    ? `${crowd.linkCount} nav links ${observed} at 360px; a small button is present but has no accessible name (aria-label or text) - if it is the collapse control, name it; either way the crowding needs a fix (fewer links, smaller type, wrapping, or a collapse)`
+                    : `${crowd.linkCount} nav links ${observed} at 360px and no collapse control found - fix by reducing link count/size, allowing wrap, or swapping to a menu control`
+            : crowd.collapsed ? 'nav collapses to a labeled menu control at 360px - no crowding' : `${crowd.linkCount} nav links fit at 360px${crowd.hasControl ? ' (a labeled menu control is also visible - check both are not shown at once by eye)' : ''}`);
+}
+
 if (!results.length) {
-    console.log('MANUAL REVIEW: no [aria-controls] dropdown/drawer hooks and no sticky/fixed header found - interactive nav behavior must be checked by hand.');
+    console.log('MANUAL REVIEW: no [aria-controls] dropdown/drawer hooks, no sticky/fixed header, and no 3+-link nav found - nothing probeable, check any interactive nav behavior by hand.');
     await kill();
     process.exit(3);
 }
