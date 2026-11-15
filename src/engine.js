@@ -151,7 +151,7 @@ async function auditFile(enginePath, file, log = () => {}, opts = {}) {
   const nav = await run(process.execPath, [path.join(toolsDir, 'nav-check.mjs'), file, ...netFlag]);
   if (nav.code === 3) {
     findings.push(mk(file, 'nav-check', 'nav-hooks', 'manual',
-      'No dropdown/drawer hooks ([aria-controls]) and no sticky/fixed header found. Hand-check: open each menu by keyboard, Tab in, Escape closes, focus returns.',
+      'Nothing automatically probeable on this page: no dropdown/drawer hooks ([aria-controls]), no sticky/fixed header, and no nav with 3+ links. Hand-check any navigation by keyboard: open menus, Tab in, Escape closes, focus returns.',
       { scope: SCOPE_LABELS['nav-check'] }));
   } else if (nav.code === 0 || nav.code === 1) {
     for (const line of nav.stdout.split('\n')) {
