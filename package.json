@@ -1,0 +1,175 @@
+{
+  "name": "website-audit-extension",
+  "displayName": "Website Audit",
+  "description": "Scan website projects for accessibility and quality issues, preview fixes as diffs, apply approved changes, and re-test with before/after evidence.",
+  "version": "0.1.0",
+  "publisher": "samrudh",
+  "private": true,
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "categories": [
+    "Linters",
+    "Other"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "website-audit.scan",
+        "title": "Website Audit: Scan Project",
+        "icon": "$(search)"
+      },
+      {
+        "command": "website-audit.retest",
+        "title": "Website Audit: Re-test",
+        "icon": "$(debug-restart)"
+      },
+      {
+        "command": "website-audit.showReport",
+        "title": "Website Audit: Show Before/After Report",
+        "icon": "$(graph)"
+      },
+      {
+        "command": "website-audit.previewFix",
+        "title": "Preview Fix",
+        "icon": "$(diff)"
+      },
+      {
+        "command": "website-audit.applyFix",
+        "title": "Apply Fix",
+        "icon": "$(check)"
+      },
+      {
+        "command": "website-audit.applyAllFixes",
+        "title": "Website Audit: Apply All Previewed Fixes"
+      },
+      {
+        "command": "website-audit.showGuidance",
+        "title": "Show Manual Review Guidance",
+        "icon": "$(info)"
+      },
+      {
+        "command": "website-audit.openFinding",
+        "title": "Open Finding",
+        "icon": "$(go-to-file)"
+      },
+      {
+        "command": "website-audit.revertFix",
+        "title": "Website Audit: Revert Last Fix (Restore .bak)",
+        "icon": "$(discard)"
+      },
+      {
+        "command": "website-audit.resetConsent",
+        "title": "Website Audit: Reset Page-Render Consent"
+      }
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "website-audit",
+          "title": "Website Audit",
+          "icon": "media/audit.svg"
+        }
+      ]
+    },
+    "views": {
+      "website-audit": [
+        {
+          "id": "websiteAudit.findings",
+          "name": "Findings",
+          "contextualTitle": "Website Audit"
+        }
+      ]
+    },
+    "menus": {
+      "view/title": [
+        {
+          "command": "website-audit.scan",
+          "when": "view == websiteAudit.findings",
+          "group": "navigation@1"
+        },
+        {
+          "command": "website-audit.retest",
+          "when": "view == websiteAudit.findings",
+          "group": "navigation@2"
+        },
+        {
+          "command": "website-audit.showReport",
+          "when": "view == websiteAudit.findings",
+          "group": "navigation@3"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "website-audit.previewFix",
+          "when": "view == websiteAudit.findings && viewItem == finding-fixable",
+          "group": "inline@1"
+        },
+        {
+          "command": "website-audit.applyFix",
+          "when": "view == websiteAudit.findings && viewItem == finding-pending",
+          "group": "inline@1"
+        },
+        {
+          "command": "website-audit.showGuidance",
+          "when": "view == websiteAudit.findings && viewItem == finding-manual",
+          "group": "inline@1"
+        },
+        {
+          "command": "website-audit.openFinding",
+          "when": "view == websiteAudit.findings && viewItem =~ /finding/",
+          "group": "inline@2"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Website Audit",
+      "properties": {
+        "websiteAudit.enginePath": {
+          "type": "string",
+          "default": "",
+          "description": "Path to the audit engine folder (contains manifest.json and/or tools/). Empty uses the bundled engine."
+        },
+        "websiteAudit.includeGlob": {
+          "type": "string",
+          "default": "**/*.{html,htm}",
+          "description": "Glob for files to scan."
+        },
+        "websiteAudit.excludeGlob": {
+          "type": "string",
+          "default": "{**/node_modules/**,**/.git/**,**/dist/**,**/out/**}",
+          "description": "Glob for files to exclude from scanning."
+        },
+        "websiteAudit.allowNetwork": {
+          "type": "boolean",
+          "default": false,
+          "markdownDescription": "Allow full network access while rendering pages during a scan. Default (off) restricts the network, best effort: external stylesheets, fonts and scripts are blocked and the page is audited as its fallback rendering, with blocked resources surfaced for manual review. Enable to audit the fully-resourced page."
+        }
+      }
+    },
+    "viewsWelcome": [
+      {
+        "view": "websiteAudit.findings",
+        "contents": "Open a folder with your HTML pages, then scan it.\n[Scan Project](command:website-audit.scan)\n\nChecks rendered HTML pages: contrast, keyboard navigation, fonts, overflow, reduced-motion fallback. Findings come with evidence; only the reduced-motion patch is auto-fixable, and it always shows a diff first.\n\nFramework (React etc.) source is not scanned directly - audit the built HTML."
+      }
+    ]
+  },
+  "scripts": {
+    "test": "node ./test/runTests.js"
+  },
+  "devDependencies": {
+    "@vscode/test-electron": "^2.4.1",
+    "mocha": "^10.7.3"
+  },
+  "capabilities": {
+    "untrustedWorkspaces": {
+      "supported": false,
+      "description": "Website Audit renders workspace HTML in a local Chrome process and runs the bundled audit tools on it. It requires a trusted workspace and never runs in Restricted Mode."
+    }
+  }
+}
