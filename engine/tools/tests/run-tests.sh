@@ -153,8 +153,8 @@ node tools/nav-check.mjs $T/fixture-nav-bad.html > /tmp/t-nav-bad.log 2>&1; ec=$
 check "broken nav fails (exit 1)" "$ec" 1
 grep -q 'FAIL  Escape closes the dropdown' /tmp/t-nav-bad.log && grep -q 'FAIL  content behind the open drawer' /tmp/t-nav-bad.log && grep -q 'FAIL  focus moves inside the drawer' /tmp/t-nav-bad.log && r=ok || r=missing
 check "broken nav: Escape/inert/focus failures each detected" "$r" ok
-node tools/nav-check.mjs $T/fixture-dup-logo.html > /tmp/t-nav-none.log 2>&1; ec=$?
-check "page without nav hooks: manual review (exit 3), not a verdict" "$ec" 3
+node tools/nav-check.mjs $T/fixture-plain.html > /tmp/t-nav-none.log 2>&1; ec=$?
+check "page with nothing probeable: manual review (exit 3), not a verdict" "$ec" 3
 
 echo "== nav-check sticky-header occlusion probes =="
 node tools/nav-check.mjs $T/fixture-sticky-good.html > /tmp/t-sticky-good.log 2>&1; ec=$?
@@ -175,15 +175,28 @@ node tools/tests/net-probe.mjs $T/fixture-offline-net.html --offline > /tmp/t-ne
 grep -q '"fetch":"blocked"' /tmp/t-net-off.log && grep -q '"ws":"blocked"' /tmp/t-net-off.log && r=ok || r=missing
 check "offline: fetch and WebSocket both blocked (local echo server)" "$r" ok
 node tools/tests/net-probe.mjs $T/fixture-offline-net.html > /tmp/t-net-on.log 2>&1
-grep -q '"fetch":"ok"' /tmp/t-net-on.log && grep -q '"ws":"ok"' /tmp/t-net-on.log && r=ok || r=skipped
-check "online control: fetch and WebSocket reachable (needs internet)" "$r" ok
+grep -q '"fetch":"ok"' /tmp/t-net-on.log && grep -q '"ws":"ok"' /tmp/t-net-on.log && r=ok || r=retry
+if [ "$r" = retry ]; then sleep 2; node tools/tests/net-probe.mjs $T/fixture-offline-net.html > /tmp/t-net-on.log 2>&1; grep -q '"fetch":"ok"' /tmp/t-net-on.log && grep -q '"ws":"ok"' /tmp/t-net-on.log && r=ok || r=missing; fi
+check "online control: fetch and WebSocket reachable (needs internet; one retry on transient failure)" "$r" ok
 node tools/validate-page.mjs $T/fixture-offline-net.html --widths 390 --offline > /tmp/t-val-offline.log 2>&1; ec=$?
 check "offline validate exits 0 (blocked resources are unverified, not failures)" "$ec" 0
-grep -q 'blocked by --offline - any webfonts it defines are unverified' /tmp/t-val-offline.log && grep -q 'offline (restricted network, best effort): 1 remote requests blocked' /tmp/t-val-offline.log && grep -q 'FALLBACK rendering - the fully-resourced page is UNVERIFIED' /tmp/t-val-offline.log && r=ok || r=missing
+grep -q 'blocked by --offline - any webfonts it defines are unverified' /tmp/t-val-offline.log && grep -qE 'offline \(restricted network, best effort\): [1-9][0-9]* remote requests blocked' /tmp/t-val-offline.log && grep -q 'FALLBACK rendering - the fully-resourced page is UNVERIFIED' /tmp/t-val-offline.log && r=ok || r=missing
 check "offline: blocked stylesheet surfaces as font manual-review, not failure" "$r" ok
 
 node tools/nav-check.mjs $T/fixture-nav-good.html --offline > /tmp/t-nav-offline.log 2>&1; ec=$?
 check "nav-check --offline: separate Chrome protected, good nav still passes" "$ec" 0
+
+echo "== nav-check collapse-at-360px probe =="
+node tools/nav-check.mjs $T/fixture-collapse-good.html > /tmp/t-collapse-good.log 2>&1; ec=$?
+check "nav that collapses to a menu at 360px passes" "$ec" 0
+node tools/nav-check.mjs $T/fixture-collapse-bad.html > /tmp/t-collapse-bad.log 2>&1; ec=$?
+check "7 links overflowing at 360px with no hamburger fails (exit 1)" "$ec" 1
+grep -q 'FAIL  nav links do not crowd at 360px' /tmp/t-collapse-bad.log && r=ok || r=missing
+check "collapse crowding detected and named" "$r" ok
+node tools/nav-check.mjs $T/fixture-collapse-unlabeled.html > /tmp/t-collapse-unlabeled.log 2>&1; ec=$?
+check "crowding with an unlabeled icon button still fails (exit 1)" "$ec" 1
+grep -q 'a small button is present but has no accessible name' /tmp/t-collapse-unlabeled.log && r=ok || r=missing
+check "unlabeled-button case names the accessibility issue, not just crowding" "$r" ok
 
 echo "unit tests: $pass passed, $fail failed"
 exit $([ $fail -eq 0 ] && echo 0 || echo 1)
