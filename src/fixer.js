@@ -6,8 +6,11 @@ const engine = require('./engine');
 
 const MOTION_CAUTION = 'The patch uses !important by design and can break animationend/transitionend-dependent or JS-driven behavior. Click through the page with reduced motion emulated after applying - a green re-run proves the rule exists, not that the page still behaves.';
 
-function previewDir(file) {
-  const dir = path.join(path.dirname(file), '.website-audit', 'preview');
+// Preview copies live in extension-owned storage, never in the user's workspace,
+// so an unapplied preview cannot dirty a repo.
+function previewDir(context, file) {
+  const id = require('crypto').createHash('sha1').update(file).digest('hex').slice(0, 12);
+  const dir = path.join(context.globalStorageUri.fsPath, 'preview', id);
   fs.mkdirSync(dir, { recursive: true });
   return dir;
 }
@@ -29,7 +32,7 @@ async function previewFix(context, enginePath, finding, state, refresh) {
     vscode.window.showInformationMessage('The fixer produced no changes for this file.');
     return { error: 'no changes' };
   }
-  const previewFile = path.join(previewDir(finding.file), path.basename(finding.file) + '.patched');
+  const previewFile = path.join(previewDir(context, finding.file), path.basename(finding.file) + '.patched');
   fs.writeFileSync(previewFile, built.patched);
   state.pendingPreviews[finding.id] = { baseContent, patched: built.patched, previewFile };
   refresh();
@@ -49,6 +52,7 @@ async function previewFix(context, enginePath, finding, state, refresh) {
 async function applyFix(context, enginePath, finding, state, refresh, rescanFile) {
   if (finding.fixable !== 'motion-patch') return { error: 'not fixable' };
   const pending = state.pendingPreviews[finding.id];
+  try { fs.rmSync(previewDir(context, finding.file), { recursive: true, force: true }); } catch (e) { /* best effort */ }
   if (pending) {
     const now = fs.readFileSync(finding.file, 'utf8');
     if (now !== pending.baseContent) {
