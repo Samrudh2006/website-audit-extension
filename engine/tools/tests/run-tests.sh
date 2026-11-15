@@ -180,7 +180,7 @@ if [ "$r" = retry ]; then sleep 2; node tools/tests/net-probe.mjs $T/fixture-off
 check "online control: fetch and WebSocket reachable (needs internet; one retry on transient failure)" "$r" ok
 node tools/validate-page.mjs $T/fixture-offline-net.html --widths 390 --offline > /tmp/t-val-offline.log 2>&1; ec=$?
 check "offline validate exits 0 (blocked resources are unverified, not failures)" "$ec" 0
-grep -q 'blocked by --offline - any webfonts it defines are unverified' /tmp/t-val-offline.log && grep -qE 'offline \(restricted network, best effort\): [1-9][0-9]* remote requests blocked' /tmp/t-val-offline.log && grep -q 'FALLBACK rendering - the fully-resourced page is UNVERIFIED' /tmp/t-val-offline.log && r=ok || r=missing
+grep -q 'blocked by --offline - any webfonts it defines are unverified' /tmp/t-val-offline.log && grep -qE 'offline \(restricted network, best effort\): [1-9][0-9]* remote requests? blocked' /tmp/t-val-offline.log && grep -q 'FALLBACK rendering - the fully-resourced page is UNVERIFIED' /tmp/t-val-offline.log && r=ok || r=missing
 check "offline: blocked stylesheet surfaces as font manual-review, not failure" "$r" ok
 
 node tools/nav-check.mjs $T/fixture-nav-good.html --offline > /tmp/t-nav-offline.log 2>&1; ec=$?
