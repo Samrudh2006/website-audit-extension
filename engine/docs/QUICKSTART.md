@@ -29,10 +29,10 @@ node tools/validate-page.mjs sample-a-childrens-hospital.html --widths 390,1280
 
 # 3. Regression tests for the tools themselves
 bash tools/tests/run-tests.sh
-# expect: "unit tests: 11 passed, 0 failed"
+# expect: "unit tests: 43 passed, 0 failed"
 ```
 
-Step 2 takes about 3-5 seconds (it launches headless Chrome twice).
+Step 2 takes about 3-5 seconds (it launches headless Chrome once).
 
 ## What "green" means here
 
@@ -47,5 +47,8 @@ lists exactly what each check proves and does not prove.
 
 This quickstart was verified by copying the package into an empty directory
 and running the three steps above with only the documented prerequisites;
-the log is in IMPROVEMENT-LOG.md (cycle 2). Copying the folder is enough -
-there is no install step, no build, no network access needed after download.
+the log is in IMPROVEMENT-LOG.md (cycle 2, re-verified with the current
+package in cycle 8 - all three steps green, suite 43/43). Copying the folder
+is enough - there is no install step, no build, no network access needed
+after download. One suite case (the online control) needs internet and
+retries once on transient failure; everything else runs fully offline.
