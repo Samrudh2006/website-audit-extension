@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>net probe</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap">
+<style>body{font-family:'Inter',system-ui,sans-serif}a:focus-visible{outline:3px solid #005fcc;outline-offset:2px}</style>
+</head><body>
+<p style="color:#1a1a1a;background:#ffffff">Remote-resource probe page body text.</p>
+<a href="#x">one link</a><span id="x"></span>
+<script>
+window.__net = { fetch: 'pending', ws: 'pending' };
+fetch('https://fonts.googleapis.com/css2?family=Inter').then(() => { window.__net.fetch = 'ok'; }).catch(() => { window.__net.fetch = 'blocked'; });
+// ws target comes from ?ws=... so the harness can point it at a local echo server
+const wsUrl = new URLSearchParams(location.search).get('ws');
+if (wsUrl) {
+  try {
+    const ws = new WebSocket(wsUrl);
+    ws.onopen = () => { window.__net.ws = 'ok'; ws.close(); };
+    ws.onerror = () => { window.__net.ws = 'blocked'; };
+  } catch { window.__net.ws = 'blocked'; }
+} else window.__net.ws = 'skipped';
+setTimeout(() => { document.title = JSON.stringify(window.__net); }, 3000);
+</script>
+</body></html>
