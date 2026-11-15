@@ -75,12 +75,15 @@ suite('Website Audit extension (real host + real engine)', () => {
     assert.notStrictEqual(preview.patched, before, 'patch changes content');
     assert.ok(fs.existsSync(preview.previewFile), 'preview file exists for the diff editor');
     assert.strictEqual(fs.readFileSync(motionFile(), 'utf8'), before, 'preview never touches the real file');
+    assert.ok(!preview.previewFile.startsWith(path.dirname(motionFile())), 'preview lives in extension storage, not the workspace');
+    assert.ok(!fs.existsSync(path.join(path.dirname(motionFile()), '.website-audit')), 'preview does not dirty the workspace');
 
     const applied = await api.applyFix(finding);
     assert.ok(applied.ok, `apply ok: ${JSON.stringify(applied)}`);
     const after = fs.readFileSync(motionFile(), 'utf8');
     assert.ok(after.includes('@media (prefers-reduced-motion: reduce)'), 'patch applied to real file');
     assert.ok(fs.existsSync(motionFile() + '.bak'), '.bak backup written by the fixer');
+    assert.ok(!fs.existsSync(preview.previewFile), 'preview temp file cleaned after apply');
     assert.strictEqual(fs.readFileSync(motionFile() + '.bak', 'utf8'), before, 'backup holds original content');
 
     // Automatic rescan after apply: motion finding must be gone.
