@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dockflow - Operations overview</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --indigo:#4054B2; --indigo-dk:#2F3E8C; --indigo-tint:#E9EDF9;
+  --amber:#D97706; --amber-dk:#9A4F04; --amber-tint:#FBF0DC;
+  --ok:#2F7D4F; --ok-tint:#E5F2EA; --ok-dk:#246B45; --warn:#B45309; --warn-tint:#FBF0DC; --err:#B3261E; --err-tint:#FBE9E7;
+  --bg:#F6F7F9; --surface:#FFFFFF; --ink:#1A2332; --muted:#5B6675; --border:#E2E6EC;
+  --sans:"IBM Plex Sans",system-ui,sans-serif; --mono:"IBM Plex Mono",ui-monospace,monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);font-size:.9375rem;line-height:1.55}
+:focus-visible{outline:3px solid var(--indigo);outline-offset:2px;border-radius:4px}
+.shell{display:grid;grid-template-columns:15rem 1fr;min-height:100vh}
+.shell>div{min-width:0}
+.grid2>*{min-width:0}
+.kpi{min-width:0}
+.panel{min-width:0}
+aside{background:var(--indigo-dk);color:#C9D2F0;display:flex;flex-direction:column;padding:1.25rem 0}
+.brand{display:flex;align-items:center;gap:.6rem;padding:0 1.25rem 1.25rem;border-bottom:1px solid rgba(255,255,255,.14);font-weight:700;font-size:1.1rem;color:#fff;text-decoration:none}
+nav.side{margin-top:1rem;display:flex;flex-direction:column}
+nav.side a{display:flex;align-items:center;gap:.75rem;padding:.7rem 1.25rem;color:#C9D2F0;text-decoration:none;font-weight:500;border-left:3px solid transparent}
+nav.side a:hover{background:rgba(255,255,255,.08);color:#fff}
+nav.side a[aria-current="page"]{background:rgba(255,255,255,.12);border-left-color:var(--amber);color:#fff;font-weight:600}
+aside .foot{margin-top:auto;padding:1rem 1.25rem 0;font-size:.78rem;color:#8B97C4}
+.topbar{display:flex;align-items:center;gap:1rem;background:var(--surface);border-bottom:1px solid var(--border);padding:.8rem 1.75rem}
+.topbar input[type=search]{flex:1;min-width:0;max-width:26rem;padding:.55rem .9rem;border:1px solid var(--border);border-radius:.5rem;font:inherit;background:var(--bg)}
+.topbar .date{font-family:var(--mono);font-size:.85rem;color:var(--muted)}
+.avatar{width:2.3rem;height:2.3rem;border-radius:50%;background:var(--indigo);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:.85rem}
+main{padding:1.75rem}
+h1{font-size:1.45rem;font-weight:700}
+.sub{color:var(--muted);margin-bottom:1.5rem}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.5rem}
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:.75rem;padding:1rem 1.15rem}
+.kpi .lbl{font-size:.8rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.kpi .val{font-family:var(--mono);font-size:1.7rem;font-weight:500;margin:.15rem 0;font-variant-numeric:tabular-nums}
+.kpi .delta{font-size:.82rem;font-weight:600}
+.kpi .up{color:var(--ok)} .kpi .down{color:var(--err)}
+.grid2{display:grid;grid-template-columns:1.6fr 1fr;gap:1rem;align-items:start}
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:.75rem;padding:1.15rem 1.25rem;margin-bottom:1rem}
+.panel h2{font-size:1.02rem;font-weight:700;margin-bottom:.9rem;display:flex;justify-content:space-between;align-items:baseline}
+.panel h2 .count{font-family:var(--mono);font-size:.8rem;color:var(--muted);font-weight:500}
+table.data{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+table.data th{text-align:left;font-size:.75rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:600;padding:.45rem .6rem;border-bottom:2px solid var(--border)}
+table.data td{padding:.6rem;border-bottom:1px solid var(--border);font-size:.9rem}
+table.data tbody tr:hover{background:var(--bg)}
+.mono{font-family:var(--mono);font-size:.85rem}
+.pill{display:inline-flex;align-items:center;gap:.35rem;font-size:.78rem;font-weight:600;padding:.18rem .6rem;border-radius:999px;white-space:nowrap}
+.pill .dot{width:.45rem;height:.45rem;border-radius:50%;background:currentColor}
+.pill.err{background:var(--err-tint);color:var(--err)}
+.pill.warn{background:var(--warn-tint);color:var(--amber-dk)}
+.pill.ok{background:var(--ok-tint);color:var(--ok-dk)}
+.pill.neutral{background:var(--indigo-tint);color:var(--indigo-dk)}
+.btn{display:inline-block;font:inherit;font-weight:600;font-size:.85rem;padding:.45rem 1rem;border-radius:.5rem;border:1px solid transparent;text-decoration:none;cursor:pointer;transition:background .15s ease}
+.btn-primary{background:var(--indigo);color:#fff}
+.btn-primary:hover{background:var(--indigo-dk)}
+.btn-ghost{border-color:var(--border);color:var(--ink);background:var(--surface)}
+.btn-ghost:hover{background:var(--bg)}
+.btn-sm{padding:.3rem .7rem;font-size:.8rem}
+.chart{display:flex;align-items:flex-end;gap:.7rem;height:9.5rem;padding:.5rem 0 0}
+.chart .bar{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:.4rem;min-width:0;height:100%}
+.chart .bar i{display:block;width:100%;max-width:2.6rem;border-radius:.3rem .3rem 0 0;background:var(--indigo)}
+.chart .bar.today i{background:var(--amber)}
+.chart .bar b{font-family:var(--mono);font-weight:500;font-size:.72rem;color:var(--muted)}
+.chart .bar span{font-size:.72rem;color:var(--muted)}
+.legend{display:flex;gap:1.2rem;margin-top:.8rem;font-size:.8rem;color:var(--muted)}
+.legend .sw{display:inline-block;width:.7rem;height:.7rem;border-radius:.2rem;margin-right:.35rem;vertical-align:-1px}
+.demobar{background:var(--amber-tint);color:var(--amber-dk);font-size:.8rem;font-weight:600;padding:.45rem 1.75rem;border-bottom:1px solid var(--border)}
+.btn[disabled]{opacity:.6;cursor:default}
+@media (max-width:40rem){.topbar .date{display:none}.kpi .val{font-size:1.45rem}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
+@media (max-width:60rem){
+  .shell{grid-template-columns:1fr;align-content:start}
+  aside{flex-direction:row;align-items:center;overflow-x:auto;padding:.6rem .75rem}
+  .brand{border-bottom:none;padding:.3rem .75rem}
+  nav.side{flex-direction:row;margin:0}
+  nav.side a{border-left:none;border-bottom:3px solid transparent;padding:.5rem .75rem;white-space:nowrap}
+  nav.side a[aria-current="page"]{border-bottom-color:var(--amber)}
+  aside .foot{display:none}
+  .kpis{grid-template-columns:repeat(2,1fr)}
+  .grid2{grid-template-columns:1fr}
+  main{padding:1rem}
+  .tablewrap{overflow-x:auto}
+}
+</style>
+</head>
+<body>
+<div class="shell">
+
+<aside>
+  <a class="brand" href="#">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="2" y="7" width="20" height="13" rx="2" fill="#D97706"/><path d="M2 9 12 3l10 6" stroke="#fff" stroke-width="2" stroke-linejoin="round" fill="none"/></svg>
+    Dockflow
+  </a>
+  <nav class="side" aria-label="Sections">
+    <a href="#overview" data-section="overview" aria-current="page">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="8" height="8" rx="1.5"/><rect x="13" y="3" width="8" height="8" rx="1.5"/><rect x="3" y="13" width="8" height="8" rx="1.5"/><rect x="13" y="13" width="8" height="8" rx="1.5"/></svg>
+      Overview</a>
+    <a href="#inbound" data-section="inbound"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 3v12m0 0 4-4m-4 4-4-4M4 21h16"/></svg>Inbound</a>
+    <a href="#outbound" data-section="outbound"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 21V9m0 0 4 4m-4-4-4 4M4 3h16"/></svg>Outbound</a>
+    <a href="#inventory" data-section="inventory"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 8 12 4l8 4v8l-8 4-8-4V8Z"/><path d="M12 12 4 8m8 4 8-4m-8 4v8"/></svg>Inventory</a>
+    <a href="#exceptions" data-section="exceptions"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 8v5m0 3v.01M10.3 3.9 2.6 17a2 2 0 0 0 1.7 3h15.4a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg>Exceptions</a>
+  </nav>
+  <div class="foot">Dockflow WMS v3.2<br>Sample dashboard - fictional data</div>
+</aside>
+
+<div>
+<div class="demobar">Interactive demo with fictional data - nothing here is connected to a real warehouse system.</div>
+<header class="topbar">
+  <input type="search" id="q" placeholder="Search shipments, SKUs, carriers" aria-label="Search shipments, SKUs, carriers">
+  <span class="date">Sun 15 Nov 2026 · 10:30 IST</span>
+  <span class="avatar" aria-label="Signed in as R. Kumar">RK</span>
+</header>
+
+<main id="main-overview">
+  <h1>Operations overview</h1>
+  <p class="sub">Fulfillment center HYD-04 · Shift B</p>
+
+  <div class="kpis">
+    <div class="kpi"><div class="lbl">Inbound today</div><div class="val">142</div><div class="delta up">&#9650; 12% vs last Sunday</div></div>
+    <div class="kpi"><div class="lbl">Outbound today</div><div class="val">187</div><div class="delta up">&#9650; 4% vs last Sunday</div></div>
+    <div class="kpi"><div class="lbl">On-time dispatch</div><div class="val">96.2%</div><div class="delta down">&#9660; 0.8 pts this week</div></div>
+    <div class="kpi"><div class="lbl">Open exceptions</div><div class="val" id="exc-kpi">7</div><div class="delta down">&#9660; 2 since 08:00</div></div>
+  </div>
+
+  <div class="grid2">
+    <div>
+      <section class="panel" aria-labelledby="exch">
+        <h2 id="exch">Exceptions needing action <span class="count" id="exc-count">7 open</span></h2>
+        <div class="tablewrap">
+        <table class="data">
+          <thead><tr><th>Shipment</th><th>Issue</th><th>Dock</th><th>Status</th><th></th></tr></thead>
+          <tbody>
+            <tr><td class="mono">SHP-20498</td><td>Damaged pallet - 14 cartons</td><td class="mono">D-03</td><td><span class="pill err"><span class="dot"></span>Critical</span></td><td><button type="button" class="btn btn-primary btn-sm resolve-btn">Resolve</button></td></tr>
+            <tr><td class="mono">SHP-20512</td><td>Carrier no-show, reschedule</td><td class="mono">D-01</td><td><span class="pill err"><span class="dot"></span>Critical</span></td><td><button type="button" class="btn btn-primary btn-sm resolve-btn">Resolve</button></td></tr>
+            <tr><td class="mono">SHP-20520</td><td>Label mismatch on 2 SKUs</td><td class="mono">D-06</td><td><span class="pill warn"><span class="dot"></span>Delayed</span></td><td><button type="button" class="btn btn-primary btn-sm resolve-btn">Resolve</button></td></tr>
+            <tr><td class="mono">SHP-20533</td><td>Temperature log overdue</td><td class="mono">COLD-2</td><td><span class="pill warn"><span class="dot"></span>Watch</span></td><td><button type="button" class="btn btn-ghost btn-sm resolve-btn">Review</button></td></tr>
+          </tbody>
+        </table>
+        </div>
+      </section>
+
+      <section class="panel" aria-labelledby="shiph">
+        <h2 id="shiph">Recent shipments <span class="count">last 6</span></h2>
+        <div class="tablewrap">
+        <table class="data">
+          <thead><tr><th>Shipment</th><th>Carrier</th><th>Dock</th><th>ETA</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td class="mono">SHP-20541</td><td>BlueLine Freight</td><td class="mono">D-02</td><td class="mono">11:40</td><td><span class="pill ok"><span class="dot"></span>On time</span></td></tr>
+            <tr><td class="mono">SHP-20540</td><td>Meridian Logistics</td><td class="mono">D-05</td><td class="mono">11:25</td><td><span class="pill warn"><span class="dot"></span>Delayed 20m</span></td></tr>
+            <tr><td class="mono">SHP-20538</td><td>Kaveri Transport</td><td class="mono">D-03</td><td class="mono">10:55</td><td><span class="pill neutral"><span class="dot"></span>Arrived</span></td></tr>
+            <tr><td class="mono">SHP-20536</td><td>BlueLine Freight</td><td class="mono">D-01</td><td class="mono">10:30</td><td><span class="pill neutral"><span class="dot"></span>Arrived</span></td></tr>
+            <tr><td class="mono">SHP-20531</td><td>Deccan Carriers</td><td class="mono">D-04</td><td class="mono">09:50</td><td><span class="pill ok"><span class="dot"></span>Departed</span></td></tr>
+            <tr><td class="mono">SHP-20527</td><td>Meridian Logistics</td><td class="mono">D-06</td><td class="mono">09:15</td><td><span class="pill ok"><span class="dot"></span>Departed</span></td></tr>
+          </tbody>
+        </table>
+        </div>
+      </section>
+    </div>
+
+    <div>
+      <section class="panel" aria-labelledby="thr">
+        <h2 id="thr">Throughput, units</h2>
+        <div class="chart" role="img" aria-label="Bar chart of units processed per day, Monday 920, Tuesday 1140, Wednesday 1060, Thursday 1230, Friday 1410, Saturday 780, Sunday 640 so far">
+          <div class="bar"><i style="height:52%"></i><b>920</b><span>Mon</span></div>
+          <div class="bar"><i style="height:64%"></i><b>1,140</b><span>Tue</span></div>
+          <div class="bar"><i style="height:60%"></i><b>1,060</b><span>Wed</span></div>
+          <div class="bar"><i style="height:70%"></i><b>1,230</b><span>Thu</span></div>
+          <div class="bar"><i style="height:80%"></i><b>1,410</b><span>Fri</span></div>
+          <div class="bar"><i style="height:45%"></i><b>780</b><span>Sat</span></div>
+          <div class="bar today"><i style="height:37%"></i><b>640</b><span>Sun</span></div>
+        </div>
+        <div class="legend"><span><span class="sw" style="background:var(--indigo)"></span>Processed</span><span><span class="sw" style="background:var(--amber)"></span>Today (in progress)</span></div>
+      </section>
+
+      <section class="panel" aria-labelledby="dockh">
+        <h2 id="dockh">Dock status</h2>
+        <table class="data">
+          <tbody>
+            <tr><td class="mono">D-01</td><td>Rescheduling</td><td><span class="pill err"><span class="dot"></span>Blocked</span></td></tr>
+            <tr><td class="mono">D-02</td><td>BlueLine unloading</td><td><span class="pill ok"><span class="dot"></span>Active</span></td></tr>
+            <tr><td class="mono">D-03</td><td>Damage inspection</td><td><span class="pill warn"><span class="dot"></span>Hold</span></td></tr>
+            <tr><td class="mono">D-04</td><td>-</td><td><span class="pill neutral"><span class="dot"></span>Free</span></td></tr>
+            <tr><td class="mono">D-05</td><td>Meridian loading</td><td><span class="pill ok"><span class="dot"></span>Active</span></td></tr>
+            <tr><td class="mono">D-06</td><td>Label rework</td><td><span class="pill warn"><span class="dot"></span>Hold</span></td></tr>
+          </tbody>
+        </table>
+      </section>
+    </div>
+  </div>
+</main>
+<section class="panel" id="demo-empty" hidden style="margin:1.75rem">
+  <h2 id="demo-empty-title">Section</h2>
+  <p style="color:var(--muted);max-width:34rem">This section is not built in this demo. The Overview tab contains the working sample with live search, filtering, and exception resolution.</p>
+  <p style="margin-top:1rem"><button type="button" class="btn btn-ghost" id="back-overview">Back to Overview</button></p>
+</section>
+</div>
+
+</div>
+<script>
+(function(){
+  var main=document.getElementById('main-overview'), empty=document.getElementById('demo-empty'),
+      title=document.getElementById('demo-empty-title'), links=document.querySelectorAll('nav.side a');
+  function show(name,label){
+    links.forEach(function(x){x.removeAttribute('aria-current')});
+    var active=document.querySelector('nav.side a[data-section="'+name+'"]');
+    if(active)active.setAttribute('aria-current','page');
+    if(name==='overview'){main.hidden=false;empty.hidden=true;}
+    else{main.hidden=true;empty.hidden=false;title.textContent=label;}
+  }
+  links.forEach(function(a){a.addEventListener('click',function(e){e.preventDefault();show(a.dataset.section,a.textContent.trim());});});
+  document.getElementById('back-overview').addEventListener('click',function(){show('overview');});
+  var q=document.getElementById('q');
+  q.addEventListener('input',function(){
+    var term=q.value.trim().toLowerCase();
+    document.querySelectorAll('#main-overview table.data').forEach(function(tbl){
+      var body=tbl.tBodies[0], vis=0;
+      body.querySelectorAll('tr:not(.noresults)').forEach(function(tr){
+        var show=term===''||tr.textContent.toLowerCase().indexOf(term)!==-1;
+        tr.style.display=show?'':'none'; if(show)vis++;
+      });
+      var nr=body.querySelector('tr.noresults');
+      if(vis===0&&term!==''){
+        if(!nr){nr=document.createElement('tr');nr.className='noresults';
+          var td=document.createElement('td');td.colSpan=tbl.querySelectorAll('thead th').length||5;
+          td.style.cssText='color:var(--muted);font-style:italic;padding:.9rem .6rem';
+          nr.appendChild(td);body.appendChild(nr);}
+        nr.firstChild.textContent='No matches for "'+q.value.trim()+'" in this list - clear the search to see everything.';
+        nr.style.display='';
+      } else if(nr){nr.style.display='none';}
+    });
+  });
+  document.querySelectorAll('.resolve-btn').forEach(function(b){
+    b.addEventListener('click',function(){
+      var tr=b.closest('tr');
+      tr.querySelector('.pill').outerHTML='<span class="pill ok"><span class="dot"></span>Resolved</span>';
+      b.textContent='Resolved';b.disabled=true;
+      var c=document.getElementById('exc-count'),k=document.getElementById('exc-kpi');
+      var n=parseInt(k.textContent,10)-1;
+      k.textContent=n;c.textContent=n+' open';
+    });
+  });
+})();
+</script>
+</body>
+</html>
