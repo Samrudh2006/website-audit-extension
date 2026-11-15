@@ -5,9 +5,9 @@
 #   npx @vscode/vsce package --allow-missing-repository --skip-license
 set -u
 cd "$(dirname "$0")/.."
-EXT_DIR=/tmp/wa-fresh-ext/samrudh.website-audit-extension-0.1.0
+EXT_DIR=/tmp/wa-fresh-ext/samrudh.website-audit-extension-0.1.1
 rm -rf "$EXT_DIR" && mkdir -p "$EXT_DIR"
-( cd "$EXT_DIR" && unzip -q -o "$OLDPWD/website-audit-extension-0.1.0.vsix" && cp -r extension/* . && rm -rf extension )
+( cd "$EXT_DIR" && unzip -q -o "$OLDPWD/website-audit-extension-0.1.1.vsix" && cp -r extension/* . && rm -rf extension )
 
 for w in /tmp/wa-smoke-ws /tmp/wa-smoke-ws2; do  # separate workspace per journey: preview writes .website-audit/
   rm -rf $w && mkdir -p $w
