@@ -1,0 +1,13 @@
+<!doctype html><html><head><meta charset="utf-8"><title>indicator fixture</title>
+<style>
+  body{font-family:Georgia,serif;background:#fff;color:#111;margin:0}
+  button{padding:8px 14px;margin:8px;font-size:16px}
+  .static-shadow{box-shadow:0 2px 6px #00000033}
+  .static-shadow:focus{outline:none}
+  .good:focus-visible{outline:2px solid #1a56db;outline-offset:2px}
+  .transparent:focus-visible{outline:2px solid transparent}
+</style></head><body>
+<button class="good" type="button">Verified</button>
+<div class="static-shadow" tabindex="0">Static shadow</div>
+<button class="transparent" type="button">No indicator</button>
+</body></html>
