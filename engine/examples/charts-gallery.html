@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Choosing the right visual - worked examples</title>
+<style>
+  :root {
+    --paper: #FBF7F0; --ink: #23323A; --muted: #5B6B72;
+    --teal: #2A7F76; --teal-dk: #1F5F59; --coral-dk: #C24A2F;
+    --sand: #F2D8A7; --surface: #FFFDF9; --border: #E8DFD2;
+  }
+  * { box-sizing: border-box; }
+  body { font-family: Georgia, 'Times New Roman', serif; background: var(--paper); color: var(--ink); margin: 0; line-height: 1.6; }
+  main { max-width: 60rem; margin: 0 auto; padding: 1.5rem 1.25rem 4rem; }
+  h1 { color: var(--teal-dk); line-height: 1.15; font-size: 1.9rem; }
+  h2 { color: var(--teal-dk); line-height: 1.2; font-size: 1.35rem; margin-top: 3rem; }
+  .rule { color: var(--muted); max-width: 42rem; margin-top: .25rem; }
+  .badge { display: inline-block; font-size: .8rem; font-weight: 700; letter-spacing: .04em; color: var(--teal-dk); background: var(--sand); border-radius: 999px; padding: .15rem .7rem; margin-left: .5rem; vertical-align: middle; }
+  figure { margin: 1.25rem 0 0; background: var(--surface); border: 1px solid var(--border); border-radius: .9rem; padding: 1.1rem 1.25rem; }
+  figcaption { font-size: .95rem; color: var(--muted); margin-top: .6rem; }
+  svg { max-width: 100%; height: auto; display: block; }
+  .axis { font-size: 12px; fill: var(--muted); }
+  .val { font-size: 12px; font-weight: bold; fill: var(--ink); }
+  .takeaway { font-size: 1.25rem; background: var(--surface); border-left: 4px solid var(--teal); padding: .9rem 1.1rem; border-radius: 0 .6rem .6rem 0; }
+  table { border-collapse: collapse; width: 100%; background: var(--surface); margin-top: 1.25rem; }
+  caption { text-align: left; font-weight: 700; padding-bottom: .5rem; }
+  th, td { border: 1px solid var(--border); padding: .5rem .75rem; text-align: right; }
+  th:first-child, td:first-child { text-align: left; }
+  thead th { background: var(--teal-dk); color: #fff; }
+  .flow { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; margin-top: 1.25rem; }
+  .flow .step { background: var(--surface); border: 2px solid var(--teal-dk); border-radius: .6rem; padding: .6rem .9rem; font-weight: 700; }
+  .flow .arrow { color: var(--teal-dk); font-weight: 700; }
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); gap: 1rem; margin-top: 1.25rem; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: .9rem; padding: 1rem 1.1rem; }
+  .card h3 { margin: 0 0 .35rem; font-size: 1.05rem; color: var(--teal-dk); }
+  a { color: var(--teal-dk); }
+  a:focus-visible { outline: 3px solid var(--teal); outline-offset: 3px; border-radius: 4px; }
+  .tablewrap { overflow-x: auto; }
+  @media (max-width: 540px) {
+    /* SVG units scale down with the rendered width; bump the unit font size so
+       chart text stays ~12px effective at phone widths. */
+    .axis, .val { font-size: 17px; }
+    /* Vertical flow on narrow screens: no dangling row-end arrows. */
+    .flow { flex-direction: column; align-items: stretch; }
+    .flow .arrow { transform: rotate(90deg); align-self: center; }
+  }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; } }
+</style>
+</head>
+<body>
+<main>
+  <h1>Choosing the right visual <span class="badge">Synthetic example data</span></h1>
+  <p class="rule">Every figure below is a form picked for its task, with the reason stated. All numbers are invented for demonstration and labeled as such. Guidance: SKILL.md, Step 9 - "Charts, graphs, cards and diagrams".</p>
+
+  <h2>1. Comparing values: bar chart</h2>
+  <p class="rule">Task: "which plan is most popular?" Bars make magnitude readable at a glance; values are labeled directly so the axis is a backup, not the only source.</p>
+  <figure>
+    <svg viewBox="0 0 520 210" role="img" aria-labelledby="bar-title bar-desc">
+      <title id="bar-title">Sign-ups by plan, one week (synthetic)</title>
+      <desc id="bar-desc">Bar chart. Starter 120, Pro 210, Team 80 sign-ups. Pro is the most popular plan.</desc>
+      <text class="axis" x="10" y="20">Sign-ups (count, one week)</text>
+      <rect x="110" y="40" width="240" height="36" fill="#2A7F76"></rect>
+      <text x="10" y="63" class="axis">Starter</text><text class="val" x="358" y="63">120</text>
+      <rect x="110" y="90" width="370" height="36" fill="#1F5F59"></rect>
+      <text x="10" y="113" class="axis">Pro</text><text class="val" x="486" y="113">210</text>
+      <rect x="110" y="140" width="160" height="36" fill="#C24A2F"></rect>
+      <text x="10" y="163" class="axis">Team</text><text class="val" x="278" y="163">80</text>
+    </svg>
+    <figcaption>Fig 1. Synthetic data. Takeaway: Pro leads with 210 sign-ups.</figcaption>
+  </figure>
+
+  <h2>2. Change over time: line chart</h2>
+  <p class="rule">Task: "are we getting faster?" A line shows the trend and the turning point; bars would invite reading each month in isolation.</p>
+  <figure>
+    <svg viewBox="0 0 520 220" role="img" aria-labelledby="line-title line-desc">
+      <title id="line-title">Average response time by month, ms (synthetic)</title>
+      <desc id="line-desc">Line chart falling from 420 ms in June to 260 ms in October. Response time improved 38 percent.</desc>
+      <text class="axis" x="10" y="18">Avg response time (ms)</text>
+      <line x1="50" y1="190" x2="500" y2="190" stroke="#E8DFD2"/>
+      <line x1="50" y1="30" x2="50" y2="190" stroke="#E8DFD2"/>
+      <text class="axis" x="8" y="194">0</text><text class="axis" x="8" y="40">500</text>
+      <polyline points="60,56 160,84 260,110 360,140 460,148" fill="none" stroke="#1F5F59" stroke-width="3"/>
+      <g fill="#1F5F59">
+        <circle cx="60" cy="56" r="4"/><circle cx="160" cy="84" r="4"/><circle cx="260" cy="110" r="4"/><circle cx="360" cy="140" r="4"/><circle cx="460" cy="148" r="4"/>
+      </g>
+      <text class="val" x="48" y="46">420</text><text class="val" x="448" y="138">260</text>
+      <text class="axis" x="48" y="208">Jun</text><text class="axis" x="148" y="208">Jul</text><text class="axis" x="248" y="208">Aug</text><text class="axis" x="348" y="208">Sep</text><text class="axis" x="448" y="208">Oct</text>
+    </svg>
+    <figcaption>Fig 2. Synthetic data. Takeaway: response time fell 38% over five months.</figcaption>
+  </figure>
+
+  <h2>3. Exact values: a table wins</h2>
+  <p class="rule">Task: "what exactly did each region sell?" When the job is looking up a number, rows and aligned figures beat every chart.</p>
+  <div class="tablewrap">
+    <table>
+      <caption>Units sold by region, Q3 (synthetic)</caption>
+      <thead><tr><th scope="col">Region</th><th scope="col">Units</th><th scope="col">Returns</th></tr></thead>
+      <tbody>
+        <tr><td>North</td><td>1,240</td><td>31</td></tr>
+        <tr><td>South</td><td>980</td><td>22</td></tr>
+        <tr><td>East</td><td>1,105</td><td>27</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>4. Process: a diagram, not a chart</h2>
+  <p class="rule">Task: "how does an order move?" Steps and handoffs want boxes and arrows in reading order. The flow is also described in text for assistive tech.</p>
+  <div class="flow" role="img" aria-label="Order flow: Cart, then Payment, then Packed, then Shipped, then Delivered.">
+    <span class="step">Cart</span><span class="arrow" aria-hidden="true">&rarr;</span>
+    <span class="step">Payment</span><span class="arrow" aria-hidden="true">&rarr;</span>
+    <span class="step">Packed</span><span class="arrow" aria-hidden="true">&rarr;</span>
+    <span class="step">Shipped</span><span class="arrow" aria-hidden="true">&rarr;</span>
+    <span class="step">Delivered</span>
+  </div>
+
+  <h2>5. One takeaway: plain text</h2>
+  <p class="rule">Task: "what's the headline?" A single important number is a sentence, not a visualization.</p>
+  <p class="takeaway">Support first-response time is down <strong>38%</strong> since June (synthetic).</p>
+
+  <h2>6. Cards: only for independent peers</h2>
+  <p class="rule">Three self-contained, repeatable items - that is what cards are for. One chart or one paragraph never goes in a card.</p>
+  <div class="cards">
+    <div class="card"><h3>Starter</h3><p>For side projects. 1 site, community support.</p><a href="#starter">Starter details</a></div>
+    <div class="card"><h3>Pro</h3><p>For growing teams. 10 sites, priority support.</p><a href="#pro">Pro details</a></div>
+    <div class="card"><h3>Team</h3><p>For organizations. Unlimited sites, SSO.</p><a href="#team">Team details</a></div>
+  </div>
+</main>
+</body>
+</html>
