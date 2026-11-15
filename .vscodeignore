@@ -1,0 +1,7 @@
+.vscode-test/**
+.vscode/**
+node_modules/**
+test/**
+test-fixture/**
+.git/**
+*.vsix
