@@ -22,6 +22,9 @@ async function run() {
   const navFails = scan.findings.filter((f) => f.tool === 'nav-check' && f.severity === 'error');
   if (!motion) throw new Error('SMOKE FAIL: no fixable motion finding');
   if (navFails.length !== 8) throw new Error('SMOKE FAIL: expected 8 nav failures, got ' + navFails.length);
+  // Regression: inline tree buttons pass the TreeItem ({finding}), not the finding.
+  const viaItem = await vscode.commands.executeCommand('website-audit.previewFix', { finding: motion });
+  if (!viaItem || viaItem.error) throw new Error('SMOKE FAIL: previewFix via tree-item arg ' + JSON.stringify(viaItem));
   const applied = await api.applyFix(motion);
   if (!applied.ok) throw new Error('SMOKE FAIL: apply ' + JSON.stringify(applied));
   if (!fs.readFileSync(motion.file, 'utf8').includes('prefers-reduced-motion')) throw new Error('SMOKE FAIL: patch missing');
