@@ -42,14 +42,22 @@ async function previewFix(context, enginePath, finding, state, refresh) {
   vscode.window.showInformationMessage(
     'Fix preview is open in the diff editor. Apply it to the real file? A .bak backup is written first.',
     'Apply Fix', 'Not now'
-  ).then((pick) => { if (pick === 'Apply Fix') applyFix(context, enginePath, finding, state, refresh); });
+  ).then((pick) => { if (pick === 'Apply Fix') acceptPreview(context, enginePath, finding, state, refresh); });
   return { patched: built.patched, previewFile, reviewText: built.reviewText };
+}
+
+// Entry point for the "Apply Fix" button on the preview notification. It must
+// re-scan the file after applying, exactly like the tree's inline Apply button;
+// the rescan callback lives on state so no call path can forget it.
+function acceptPreview(context, enginePath, finding, state, refresh) {
+  return applyFix(context, enginePath, finding, state, refresh, state.rescanFile);
 }
 
 // Applies a previewed fix to the real file via the engine's fixer (which
 // writes <file>.bak and refuses when a .bak already exists), then re-scans
 // that file. Returns { ok, refused, error, backup }.
 async function applyFix(context, enginePath, finding, state, refresh, rescanFile) {
+  rescanFile = rescanFile || state.rescanFile;
   if (finding.fixable !== 'motion-patch') return { error: 'not fixable' };
   const pending = state.pendingPreviews[finding.id];
   try { fs.rmSync(previewDir(context, finding.file), { recursive: true, force: true }); } catch (e) { /* best effort */ }
@@ -94,6 +102,7 @@ async function applyFix(context, enginePath, finding, state, refresh, rescanFile
 // again later. If the file changed since the fix was applied, reverting would
 // discard those edits: refuse unless force is set (the UI asks explicitly).
 async function revertFix(context, enginePath, file, state, refresh, rescanFile, force = false) {
+  rescanFile = rescanFile || state.rescanFile;
   const backup = file + '.bak';
   if (!fs.existsSync(backup)) {
     vscode.window.showWarningMessage(`No backup found at ${backup}`);
@@ -141,4 +150,4 @@ async function applyAllFixes(context, enginePath, state, refresh, rescanFile) {
   return { ok: true, results };
 }
 
-module.exports = { previewFix, applyFix, revertFix, applyAllFixes, MOTION_CAUTION };
+module.exports = { previewFix, acceptPreview, applyFix, revertFix, applyAllFixes, MOTION_CAUTION };
