@@ -81,6 +81,16 @@ Escape closes, focus returns where it left, and the content behind an open
 drawer is unreachable (inert/aria-hidden/hidden). Pages without the hooks get
 a MANUAL REVIEW result (exit 3), not a pass or fail.
 
+A content-driven collapse probe runs on every page at 360px: if 3+ visible nav
+links overlap or overflow their bar and no labeled menu control is visible, it
+fails - naming the observed defect (overlap / overflow) and offering fix
+options (fewer links, smaller type, wrapping, or a collapse), never mandating
+a hamburger. If links crowd while a control is visible, it fails as
+both-shown-at-once. If an unlabeled small button is present, the failure
+calls out the missing accessible name separately from the crowding. If the
+nav collapses into a labeled control, it passes. Pages with small navs (under
+3 links and no control) skip the probe.
+
 Sticky/fixed top bars get two occlusion probes that run whether or not the
 dropdown/drawer hooks exist: (1) every tabbable element is scrolled to both
 the top and bottom viewport edge and must not end up under the bar - this is
