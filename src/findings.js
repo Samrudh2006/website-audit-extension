@@ -63,6 +63,7 @@ class FindingsProvider {
         item.tooltip = `${f.message}\n\nCheck: ${f.tool}\nScope: ${f.scope}${f.detail ? `\nEvidence: ${f.detail}` : ''}`;
         item.contextValue = pending ? 'finding-pending' : f.fixable ? 'finding-fixable' : f.severity === 'manual' ? 'finding-manual' : 'finding';
         item._parentFile = file;
+        item.finding = f;
         item.command = { command: 'website-audit.openFinding', title: 'Open', arguments: [f] };
         return item;
       });
