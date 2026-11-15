@@ -1,0 +1,27 @@
+<!doctype html><html><head><meta charset="utf-8"><title>nav bad</title>
+<style>
+  body{font-family:Georgia,serif;background:#fff;color:#111;margin:0}
+  header.site{display:flex;gap:16px;padding:12px}
+  .drop-panel{display:none;position:absolute;background:#fff;border:1px solid #ccc}
+  .drop.open .drop-panel{display:block}
+  #drawer{display:none;position:fixed;inset:0 30% 0 0;background:#fff;z-index:20;padding:16px}
+  #drawer.open{display:block}
+  a:focus-visible,button:focus-visible{outline:2px solid #1a56db}
+</style></head><body>
+<header class="site">
+  <a class="logo" href="/">Acme</a>
+  <span class="drop">
+    <button id="dropBtn" aria-expanded="false" aria-controls="dropPanel" type="button">Services</button>
+    <span class="drop-panel" id="dropPanel"><a href="/a">Alpha</a></span>
+  </span>
+  <button id="burger" aria-expanded="false" aria-controls="drawer" type="button">Menu</button>
+</header>
+<div id="drawer" role="dialog" aria-modal="true"><button id="drawerClose" type="button">Close</button><a href="/m1">One</a></div>
+<main><h1>Page</h1><a href="/content">Content link</a></main>
+<script>
+document.getElementById('dropBtn').addEventListener('click', () => document.querySelector('.drop').classList.toggle('open'));
+document.getElementById('burger').addEventListener('click', () => document.getElementById('drawer').classList.add('open'));
+document.getElementById('drawerClose').addEventListener('click', () => document.getElementById('drawer').classList.remove('open'));
+// no Escape handling, no aria-expanded, no focus management, no inert/hidden main
+</script>
+</body></html>
