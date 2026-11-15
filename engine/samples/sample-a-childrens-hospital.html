@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Little Roots Children's Hospital - Pediatric care, around the clock</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700&family=Nunito:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --teal:#2A7F76; --teal-dk:#1F5F59; --coral:#E86A4E; --coral-dk:#C24A2F;
+  --sand:#F2D8A7; --ivory:#FBF7F0; --surface:#FFFDF9;
+  --ink:#23323A; --muted:#5B6B72; --border:#E8DFD2;
+  --display:"Baloo 2",system-ui,sans-serif; --body:"Nunito",system-ui,sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:var(--body);background:var(--ivory);color:var(--ink);font-size:1.0625rem;line-height:1.65}
+h1,h2,h3{font-family:var(--display);line-height:1.15;color:var(--teal-dk)}
+h1{font-size:clamp(2.1rem,5vw,3.05rem);font-weight:700}
+h2{font-size:clamp(1.6rem,3.4vw,2rem);font-weight:600;margin-bottom:.5rem}
+p.lead{font-size:1.2rem;color:var(--muted);max-width:34rem}
+a{color:var(--teal-dk)}
+:focus-visible{outline:3px solid var(--teal);outline-offset:3px;border-radius:4px}
+.wrap{max-width:72rem;margin:0 auto;padding:0 1.5rem}
+.btn{display:inline-block;font-family:var(--body);font-weight:700;font-size:1rem;padding:.85rem 1.6rem;border-radius:999px;text-decoration:none;border:2px solid transparent;transition:background .18s ease,transform .18s ease}
+.btn-primary{background:var(--coral-dk);color:#fff}
+.btn-primary:hover{background:#A93F26}
+.btn-outline{border-color:var(--teal);color:var(--teal-dk);background:transparent}
+.btn-outline:hover{background:#EAF4F2}
+.emergency-bar{background:var(--teal-dk);color:#fff;font-size:.95rem;font-weight:600}
+.emergency-bar .wrap{display:flex;flex-wrap:wrap;gap:.5rem 2rem;justify-content:space-between;padding-top:.55rem;padding-bottom:.55rem}
+.emergency-bar a{color:#fff;font-weight:700}
+header.site{background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:10}
+header.site .wrap{display:flex;align-items:center;gap:1.5rem;padding-top:.8rem;padding-bottom:.8rem}
+.logo{display:flex;align-items:center;gap:.6rem;text-decoration:none}
+.logo span{white-space:nowrap;font-family:var(--display);font-weight:700;font-size:1.3rem;color:var(--teal-dk)}
+nav.main{margin-left:auto;display:flex;align-items:center;gap:1.4rem;flex-wrap:wrap}
+nav.main a.navlink{color:var(--ink);text-decoration:none;font-weight:600;font-size:1rem}
+nav.main a.navlink:hover{color:var(--teal-dk);text-decoration:underline;text-underline-offset:4px}
+.hero{padding:3.5rem 0 4rem}
+.hero .wrap{display:grid;grid-template-columns:1.1fr .9fr;gap:3rem;align-items:center}
+.hero .actions{display:flex;gap:1rem;flex-wrap:wrap;margin-top:1.8rem}
+.hero .note{margin-top:1.2rem;font-size:.95rem;color:var(--muted)}
+.hero-art{animation:float 7s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+.stats{background:var(--sand);padding:1.6rem 0}
+.stats .wrap{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;text-align:center}
+.stats .num{font-family:var(--display);font-weight:700;font-size:1.7rem;color:var(--teal-dk);display:block}
+.stats .lbl{font-size:.92rem;color:var(--ink);font-weight:600}
+section.block{padding:3.5rem 0}
+.dept{display:grid;grid-template-columns:3.25rem 1fr;gap:1.1rem;padding:1.4rem 0;border-bottom:1px solid var(--border);align-items:start}
+.dept:last-child{border-bottom:none}
+.dept h3{font-size:1.2rem;margin-bottom:.15rem}
+.dept p{color:var(--muted);font-size:1rem}
+.dept .ic{width:3.25rem;height:3.25rem;border-radius:1rem;background:#EAF4F2;display:flex;align-items:center;justify-content:center}
+.quote-band{background:var(--teal-dk);color:#fff;padding:3.5rem 0}
+.quote-band blockquote{font-family:var(--display);font-weight:500;font-size:clamp(1.3rem,2.6vw,1.7rem);line-height:1.35;max-width:46rem}
+.quote-band cite{display:block;margin-top:1.1rem;font-style:normal;font-family:var(--body);font-size:1rem;color:var(--sand)}
+.visit .wrap{display:grid;grid-template-columns:1fr 1fr;gap:3rem}
+.visit h3{font-size:1.15rem;margin:1.2rem 0 .4rem}
+table.hours{width:100%;border-collapse:collapse;font-size:1rem;font-variant-numeric:tabular-nums}
+table.hours td{padding:.45rem 0;border-bottom:1px solid var(--border)}
+table.hours td:last-child{text-align:right;font-weight:600}
+details.faq{border:1px solid var(--border);border-radius:.9rem;background:var(--surface);margin-bottom:.8rem;padding:0}
+details.faq summary{cursor:pointer;font-weight:700;padding:1rem 1.2rem;list-style:none;display:flex;justify-content:space-between;align-items:center}
+details.faq summary::after{content:"+";font-family:var(--display);font-size:1.3rem;color:var(--teal)}
+details.faq[open] summary::after{content:"–"}
+details.faq p{padding:0 1.2rem 1.1rem;color:var(--muted)}
+footer.site{background:var(--teal-dk);color:#D9E8E5;padding:2.5rem 0 2rem;margin-top:2rem;font-size:.95rem}
+footer.site .wrap{display:grid;grid-template-columns:2fr 1fr 1fr;gap:2rem}
+footer.site h3{color:#fff;font-size:1.05rem;margin-bottom:.5rem}
+footer.site a{color:#fff}
+footer .fine{grid-column:1/-1;border-top:1px solid rgba(255,255,255,.2);padding-top:1rem;font-size:.85rem;color:#C4DAD5}
+.demobar{background:var(--sand);color:var(--ink);font-size:.88rem;font-weight:700;text-align:center;padding:.5rem 1rem;border-bottom:1px solid var(--border)}
+.btn-demo{cursor:default}
+@media (max-width:56rem){
+  header.site .wrap{flex-wrap:wrap}
+  nav.main{margin-left:0;width:100%}
+  .hero .wrap,.visit .wrap{grid-template-columns:1fr;gap:2rem}
+  .stats .wrap{grid-template-columns:repeat(2,1fr);gap:1.4rem}
+  footer.site .wrap{grid-template-columns:1fr}
+  .hero-art{max-width:22rem;margin:0 auto}
+}
+@media (prefers-reduced-motion:reduce){
+  .hero-art{animation:none}
+  html{scroll-behavior:auto}
+}
+</style>
+</head>
+<body>
+
+<div class="demobar">Design sample with fictional content - not a real hospital. Contacts, stats and reviews are invented; buttons marked (demo) are not connected.</div>
+
+<div class="emergency-bar">
+  <div class="wrap">
+    <span>24/7 pediatric emergency &amp; NICU</span>
+    <span>Call +91 40 4000 1234 (sample number)</span>
+  </div>
+</div>
+
+<header class="site">
+  <div class="wrap">
+    <a class="logo" href="#top" aria-label="Little Roots Children's Hospital - home">
+      <svg width="34" height="34" viewBox="0 0 34 34" fill="none" aria-hidden="true">
+        <circle cx="17" cy="17" r="16" fill="#2A7F76"/>
+        <path d="M17 25c0-5 1.5-8.5 6-11-1 5-2 8-6 11Zm0 0c0-5-1.5-8.5-6-11 1 5 2 8 6 11Z" fill="#F2D8A7"/>
+      </svg>
+      <span>Little Roots</span>
+    </a>
+    <nav class="main" aria-label="Main">
+      <a class="navlink" href="#departments">Departments</a>
+      <a class="navlink" href="#visit">Plan your visit</a>
+      <a class="navlink" href="#faq">FAQ</a>
+      <a class="btn btn-primary btn-demo" href="#visit" title="Demo control - not connected to a booking system">Book an appointment (demo)</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+
+<section class="hero">
+  <div class="wrap">
+    <div>
+      <h1>Pediatric care, around the clock</h1>
+      <p class="lead">From newborn checkups to a 24/7 children's emergency room - 40+ pediatric specialists under one roof in Kondapur, Hyderabad.</p>
+      <div class="actions">
+        <a class="btn btn-primary btn-demo" href="#visit" title="Demo control - not connected to a booking system">Book an appointment (demo)</a>
+        <a class="btn btn-outline" href="#departments">See departments</a>
+      </div>
+      <p class="note">OPD open Mon-Sat, 9:00-20:00. Emergency and NICU never close.</p>
+    </div>
+    <svg class="hero-art" viewBox="0 0 420 320" fill="none" role="img" aria-label="Illustration of a child and doctor under a sunrise">
+      <circle cx="330" cy="70" r="46" fill="#F2D8A7"/>
+      <rect x="30" y="120" width="360" height="170" rx="24" fill="#EAF4F2"/>
+      <circle cx="150" cy="185" r="34" fill="#2A7F76"/>
+      <circle cx="150" cy="172" r="14" fill="#FBF7F0"/>
+      <path d="M150 192c-9 0-15 6-15 14h30c0-8-6-14-15-14Z" fill="#FBF7F0"/>
+      <circle cx="255" cy="200" r="24" fill="#E86A4E"/>
+      <circle cx="255" cy="192" r="10" fill="#FBF7F0"/>
+      <path d="M255 206c-6 0-10 4-10 10h20c0-6-4-10-10-10Z" fill="#FBF7F0"/>
+      <path d="M60 290c60-24 240-24 300 0" stroke="#2A7F76" stroke-width="6" stroke-linecap="round"/>
+      <path d="M95 105c8-12 24-12 30-2 6-10 22-10 30 2" stroke="#E86A4E" stroke-width="6" stroke-linecap="round" fill="none"/>
+    </svg>
+  </div>
+</section>
+
+<div class="stats">
+  <div class="wrap">
+    <div><span class="num">40+</span><span class="lbl">pediatric specialists</span></div>
+    <div><span class="num">24/7</span><span class="lbl">emergency &amp; NICU</span></div>
+    <div><span class="num">15 yrs</span><span class="lbl">average experience</span></div>
+    <div><span class="num">4.9/5</span><span class="lbl">parent rating (2,300+ reviews)</span></div>
+  </div>
+</div>
+
+<section class="block" id="departments">
+  <div class="wrap">
+    <h2>Departments</h2>
+    <p class="lead" style="margin-bottom:1rem">Care for every stage, from the first week of life to the teens.</p>
+
+    <div class="dept">
+      <div class="ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#2A7F76" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M5 21c1-4 3.5-6 7-6s6 2 7 6"/></svg></div>
+      <div><h3>General pediatrics</h3><p>Fevers, infections, growth tracking, and everyday concerns - same-day appointments most weekdays.</p></div>
+    </div>
+    <div class="dept">
+      <div class="ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#2A7F76" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 21s-7-4.5-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 5.5-7 10-7 10Z"/></svg></div>
+      <div><h3>Neonatology &amp; NICU</h3><p>Level III NICU with 12 beds for premature and critically ill newborns, staffed round the clock.</p></div>
+    </div>
+    <div class="dept">
+      <div class="ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#2A7F76" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 3v6a6 6 0 0 0 12 0V3M12 15v3a4 4 0 0 0 4 4h1"/></svg></div>
+      <div><h3>Vaccination clinic</h3><p>Full IAP schedule, catch-up plans, and travel vaccines - walk-ins every morning, 9:00-12:00.</p></div>
+    </div>
+    <div class="dept">
+      <div class="ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#2A7F76" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="4"/><path d="M12 8v8M8 12h8"/></svg></div>
+      <div><h3>Pediatric surgery</h3><p>Day-care and inpatient surgery with child-specialist anaesthesia teams and recovery rooms.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="quote-band">
+  <div class="wrap">
+    <blockquote>"At 2 AM with a crying six-month-old, you want a hospital that answers on the first ring. They did - and the doctor called back in four minutes."</blockquote>
+    <cite>- Priya R., mother of two, Kondapur</cite>
+  </div>
+</section>
+
+<section class="block visit" id="visit">
+  <div class="wrap">
+    <div>
+      <h2>Plan your visit</h2>
+      <h3>OPD hours</h3>
+      <table class="hours">
+        <tr><td>Monday - Friday</td><td>9:00 - 20:00</td></tr>
+        <tr><td>Saturday</td><td>9:00 - 17:00</td></tr>
+        <tr><td>Sunday</td><td>Emergency only</td></tr>
+        <tr><td>Vaccination walk-ins</td><td>Daily 9:00 - 12:00</td></tr>
+      </table>
+      <p style="margin-top:1.2rem"><span class="btn btn-primary btn-demo" role="button" aria-disabled="true" title="Demo control - not connected">Call to book (demo - not connected)</span></p>
+    </div>
+    <div>
+      <h3>Find us</h3>
+      <p>Little Roots Children's Hospital<br>Plot 14, Botanical Garden Road<br>Kondapur, Hyderabad 500084</p>
+      <h3>Good to know</h3>
+      <p style="color:var(--muted)">Free basement parking from Gate 2. A parents' lounge and feeding room are on every floor. Most insurance desks close at 18:00 - carry your card for cashless admission.</p>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="faq" style="padding-top:0">
+  <div class="wrap">
+    <h2>Questions parents ask</h2>
+    <details class="faq"><summary>Do I need an appointment for the emergency room?</summary><p>No. The pediatric emergency and NICU are open 24/7 with no appointment. Walk in any time; a triage nurse sees every child within five minutes.</p></details>
+    <details class="faq"><summary>Can both parents stay overnight?</summary><p>Yes. Every inpatient room has two attendant beds, and one parent can stay in the NICU family room overnight.</p></details>
+    <details class="faq"><summary>Which vaccines are walk-in and which need a slot?</summary><p>All routine IAP vaccines are walk-in between 9:00 and 12:00 daily. Rabies, typhoid boosters for travel, and catch-up plans need a booked slot so a doctor can review the history.</p></details>
+    <details class="faq"><summary>Do you offer video consultations?</summary><p>Yes, for follow-ups and reports review, Monday to Saturday. New symptoms are always seen in person.</p></details>
+  </div>
+</section>
+
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <div>
+      <h3>Little Roots Children's Hospital</h3>
+      <p>Plot 14, Botanical Garden Road, Kondapur, Hyderabad 500084<br>
+      +91 40 4000 1234 (sample number) · care@littleroots.example (sample address)</p>
+    </div>
+    <div>
+      <h3>Hours</h3>
+      <p>OPD: Mon-Sat 9:00-20:00<br>Emergency &amp; NICU: 24/7</p>
+    </div>
+    <div>
+      <h3>Quick links</h3>
+      <p><a href="#departments">Departments</a><br><a href="#visit">Plan your visit</a><br><a href="#faq">FAQ</a></p>
+    </div>
+    <p class="fine">Fictional demo content throughout - see the notice at the top of the page. Built to test a website-design guide.</p>
+  </div>
+</footer>
+
+</body>
+</html>
