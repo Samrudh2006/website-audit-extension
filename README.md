@@ -111,3 +111,11 @@ MIT. See LICENSE.
 
 - **0.1.1** - Fixed: clicking "Apply Fix" on the preview notification did not re-scan the file, so the Findings tree and diagnostics kept showing the fixed issue until you pressed Re-test. All apply/revert paths now re-scan automatically (regression test added). Single-file re-scans after a fix now honor `websiteAudit.allowNetwork` like the full scan does.
 - **0.1.0** - First tested prototype.
+
+## Reproducing the tests
+
+- Host tests (real VS Code host and Chrome engine): `npm install && xvfb-run -a node test/runTests.js`
+- Installed-package smoke test: build the VSIX (`npx @vscode/vsce package --allow-missing-repository --skip-license`), then `bash scripts/smoke.sh`
+- UI capture of the apply path: `xvfb-run -a -s "-screen 0 1400x900x24" node test/runUiVerify.js`, then grab screenshots of the window (`import -window root shot.png`) while it runs. The script scans, previews and applies a fix and waits so you can inspect the Findings tree.
+
+These paths were run on Linux with VS Code at `/usr/share/code/code`; change `vscodeExecutablePath` for other setups.
